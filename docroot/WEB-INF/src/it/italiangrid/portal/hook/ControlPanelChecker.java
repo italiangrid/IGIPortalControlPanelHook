@@ -4,16 +4,12 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-
 import com.liferay.portal.kernel.events.Action;
 import com.liferay.portal.kernel.events.ActionException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.struts.LastPath;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Role;
 
@@ -31,7 +27,7 @@ public class ControlPanelChecker extends Action {
 	public void run(HttpServletRequest request, HttpServletResponse response)
 			throws ActionException {
 		// TODO Auto-generated method stub
-		_log.error("Sono dentro all'hook");
+		_log.debug("Sono dentro all'hook");
 		
 		
 		try {
@@ -39,9 +35,9 @@ public class ControlPanelChecker extends Action {
 			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
 			String reqUrl = PortalUtil.getLayoutURL(themeDisplay.getLayout(),themeDisplay);
 			
-			_log.error("pronto per il check di: " + reqUrl2);
+			_log.debug("pronto per il check di: " + reqUrl2);
 			if(reqUrl2.contains("/c/search")){
-				_log.error("trovato search");
+				_log.debug("trovato search");
 				response.sendRedirect(request.getContextPath()+ "/web/guest/welcome");
 				return;
 			}
@@ -51,12 +47,12 @@ public class ControlPanelChecker extends Action {
 			
 			long userId = Long.parseLong(request.getRemoteUser());
 			
-			_log.error("Recuperato userId: "+ userId);
+			_log.debug("Recuperato userId: "+ userId);
 			
 			
 			//LastPath lastPath = new LastPath(request.getContextPath(), reqUrl.replace(request.getContextPath(), ""));// ;
 			long companyId = PortalUtil.getCompanyId(request);
-			_log.error("Recuperato companyId: "+ companyId);
+			_log.debug("Recuperato companyId: "+ companyId);
 			Role adminRole;
 			boolean isAdmin = false;
 			
@@ -64,19 +60,19 @@ public class ControlPanelChecker extends Action {
 			adminRole = RoleLocalServiceUtil.getRole(companyId, "Administrator");
 			long[] users = UserLocalServiceUtil.getRoleUserIds(adminRole.getRoleId());
 			for (long l : users) {
-				_log.error("users: "+ l);
+				_log.debug("users: "+ l);
 				if(l == userId){
 					isAdmin = true;
 					break;
 				}
-				_log.error("isAdmin: "+ isAdmin);
+				_log.debug("isAdmin: "+ isAdmin);
 			}
 		
 			
 			if(!isAdmin){
-				_log.error("pronto per il check di: " + reqUrl);
+				_log.debug("pronto per il check di: " + reqUrl);
 				if(reqUrl.contains("/group/control_panel")){
-					_log.error("trovato control panel");
+					_log.debug("trovato control panel");
 					response.sendRedirect(request.getContextPath()+ "/web/guest/welcome");
 				}
 			}
@@ -92,7 +88,7 @@ public class ControlPanelChecker extends Action {
 			e.printStackTrace();
 		}
 		
-		_log.error("Esco dall'hook");
+		_log.debug("Esco dall'hook");
 	}
 
 }
